@@ -1,0 +1,13 @@
+node_modules
+npm-debug.log
+.git
+.env
+Dockerfile
+docker-compose.yml
+.dockerignore
+frontend-legacy
+database
+eemci-production-2
+*.bat
+dist
+.manus-logs

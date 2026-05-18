@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  # --- 1. Container dyal Database ---
+  db:
+    image: mysql:8.0
+    container_name: eemci_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password_hna
+      MYSQL_DATABASE: eemci_db_name      # Smiya dyal l-base de données dyalk
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+      # Had l-staf ghad y-importi l-fichier .sql dyalk automatic f l-allf l-awal:
+      - ./database/eemci.sql:/docker-entrypoint-initdb.d/eemci.sql
+
+  # --- 2. Container dyal l-Backend ---
+  backend:
+    build:
+      context: ./backend
+    container_name: eemci_backend
+    restart: always
+    ports:
+      - "5000:5000"  # Port dyal l-backend
+    environment:
+      - NODE_ENV=production
+      - DB_HOST=db   # Docker ghad y-connecti l-backend m3a l-db automatic b had l-smiya
+    depends_on:
+      - db
+
+volumes:
+  db_data:
