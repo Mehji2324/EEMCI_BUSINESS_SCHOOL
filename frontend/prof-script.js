@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const user = JSON.parse(sessionStorage.getItem('user'));
 
     if (!token || user?.role !== 'professor') {
-        window.location.href = 'index.html';
+        window.location.href = '/login';
         return;
     }
 
@@ -34,7 +34,7 @@ function logout() {
     sessionStorage.removeItem('token');
     sessionStorage.removeItem('user');
     if (socket) socket.disconnect();
-    window.location.href = 'index.html';
+    window.location.href = '/';
 }
 
 function showNotify(title, icon = 'success') {

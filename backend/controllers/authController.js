@@ -12,12 +12,12 @@ exports.login = asyncHandler(async (req, res) => {
 
     const user = await User.findByEmail(email);
     if (!user) {
-        return res.status(401).json({ success: false, message: 'Invalid credentials' });
+        return res.status(401).json({ success: false, message: 'Identifiants invalides' });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-        return res.status(401).json({ success: false, message: 'Invalid credentials' });
+        return res.status(401).json({ success: false, message: 'Identifiants invalides' });
     }
 
     // Sign Token

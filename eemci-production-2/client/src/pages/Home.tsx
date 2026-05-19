@@ -38,13 +38,28 @@ export default function Home() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [lang, setLang] = useState<"fr" | "ar">("fr");
 
+  const [user, setUser] = useState<any>(null);
+
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", handleScroll, { passive: true });
+    
+    // Check if user is logged in
+    const storedUser = sessionStorage.getItem("user");
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+    
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const isAr = lang === "ar";
+  
+  const getDashboardUrl = (role: string) => {
+    if (role === 'admin') return 'admin-dashboard.html';
+    if (role === 'professor') return 'professor-dashboard.html';
+    return 'dashboard.html';
+  };
 
   const stats = [
     { icon: GraduationCap, value: "+1200", label: "Étudiants formés" },
@@ -158,6 +173,28 @@ export default function Home() {
           </nav>
 
           <div className="flex items-center gap-2">
+            {user ? (
+              <a href={getDashboardUrl(user.role)}>
+                <Button
+                  variant={scrolled ? "default" : "outline"}
+                  size="sm"
+                  className={scrolled ? "" : "bg-white/10 border-white/40 text-white hover:bg-white/20"}
+                >
+                  Tableau de bord
+                </Button>
+              </a>
+            ) : (
+              <a href="/login">
+                <Button
+                  variant={scrolled ? "default" : "outline"}
+                  size="sm"
+                  className={scrolled ? "" : "bg-white/10 border-white/40 text-white hover:bg-white/20"}
+                >
+                  Connexion
+                </Button>
+              </a>
+            )}
+
             <Button
               variant="ghost"
               size="sm"
@@ -238,15 +275,27 @@ export default function Home() {
             </p>
 
             <div className="mt-10 flex flex-wrap gap-4">
-              <Link href="/login">
-                <Button
-                  size="lg"
-                  className="bg-white text-blue-900 hover:bg-blue-50 h-12 px-6 text-base font-semibold transition-all active:scale-95"
-                >
-                  Accéder à l'espace étudiant
-                  <ChevronRight className={`w-5 h-5 ${isAr ? "me-2 rotate-180" : "ms-2"}`} />
-                </Button>
-              </Link>
+              {user ? (
+                <a href={getDashboardUrl(user.role)}>
+                  <Button
+                    size="lg"
+                    className="bg-white text-blue-900 hover:bg-blue-50 h-12 px-6 text-base font-semibold transition-all active:scale-95"
+                  >
+                    Mon Tableau de bord
+                    <ChevronRight className={`w-5 h-5 ${isAr ? "me-2 rotate-180" : "ms-2"}`} />
+                  </Button>
+                </a>
+              ) : (
+                <a href="/login">
+                  <Button
+                    size="lg"
+                    className="bg-white text-blue-900 hover:bg-blue-50 h-12 px-6 text-base font-semibold transition-all active:scale-95"
+                  >
+                    Connexion à l'espace étudiant
+                    <ChevronRight className={`w-5 h-5 ${isAr ? "me-2 rotate-180" : "ms-2"}`} />
+                  </Button>
+                </a>
+              )}
               <a href="#about">
                 <Button
                   size="lg"

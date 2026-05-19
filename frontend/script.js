@@ -35,16 +35,49 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Role-based redirect if on login page
-    if (path.includes('login.html')) {
+    if (path.includes('login.html') || path === '/login') {
         if (token && user) {
             redirectByRole(user.role);
         }
     }
+
+    // ─── HOME PAGE HOTFIX (Ensures Login Button Works) ───────────────────────
+    if (path === '/' || path.includes('index.html')) {
+        const applyHotfix = () => {
+            const buttons = document.querySelectorAll('button');
+            buttons.forEach(btn => {
+                const text = btn.textContent.trim();
+                // Check for the main hero button
+                if (text.includes('Accéder à l\'espace étudiant') || text.includes('Connexion à l\'espace étudiant')) {
+                    btn.innerHTML = `Connexion <i class="fas fa-chevron-right ms-2"></i>`;
+                    const link = btn.closest('a');
+                    if (link) {
+                        link.href = '/login';
+                        link.onclick = (e) => { e.preventDefault(); window.location.href = '/login'; };
+                    }
+                }
+                // Check for potential header buttons
+                if (text === 'Accéder' || text === 'Connexion') {
+                    const link = btn.closest('a');
+                    if (link) {
+                        link.href = '/login';
+                        link.onclick = (e) => { e.preventDefault(); window.location.href = '/login'; };
+                    }
+                }
+            });
+        };
+        // Initial run
+        applyHotfix();
+        // Periodic check to handle React late rendering
+        const hotfixInterval = setInterval(applyHotfix, 1000);
+        setTimeout(() => clearInterval(hotfixInterval), 10000); // Stop after 10s
+    }
 });
 
 function redirectByRole(role) {
-    // Redirect to the new Accueil page as requested
-    window.location.href = 'index.html';
+    if (role === 'admin') window.location.href = '/admin-dashboard.html';
+    else if (role === 'professor') window.location.href = '/professor-dashboard.html';
+    else window.location.href = '/dashboard.html';
 }
 
 function logout() {
